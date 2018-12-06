@@ -60,6 +60,8 @@ export interface Props {
   sortValue?: string;
   /** Collection of sort options to choose from */
   sortOptions?: Option[];
+  /** Arbitrary ReactNode to display instead of sortOptions */
+  customTool?: React.ReactNode;
   /** Callback when sort option is changed */
   onSortChange?(selected: string, id: string): void;
   /** Callback when selection is changed */
@@ -340,6 +342,7 @@ export class ResourceList extends React.Component<CombinedProps, State> {
       showHeader = false,
       sortOptions,
       sortValue,
+      customTool,
       onSortChange,
       polaris: {intl},
     } = this.props;
@@ -378,7 +381,7 @@ export class ResourceList extends React.Component<CombinedProps, State> {
     );
 
     const sortingSelectMarkup =
-      sortOptions && sortOptions.length > 0 ? (
+      sortOptions && sortOptions.length > 0 && !customTool ? (
         <div className={styles.SortWrapper}>
           {sortingLabelMarkup}
           <Select
@@ -390,6 +393,11 @@ export class ResourceList extends React.Component<CombinedProps, State> {
             disabled={selectMode}
           />
         </div>
+      ) : null;
+
+    const customToolMarkup =
+      customTool && !sortingSelectMarkup ? (
+        <div className={styles.CustomToolWrapper}>{customTool}</div>
       ) : null;
 
     const headerTitleMarkup = (
@@ -453,6 +461,7 @@ export class ResourceList extends React.Component<CombinedProps, State> {
                   <div className={styles.HeaderContentWrapper}>
                     {headerTitleMarkup}
                     {checkableButtonMarkup}
+                    {customToolMarkup}
                     {sortingSelectMarkup}
                     {selectButtonMarkup}
                   </div>

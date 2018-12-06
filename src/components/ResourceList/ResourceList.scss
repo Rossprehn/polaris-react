@@ -92,7 +92,8 @@ $item-wrapper-loading-height: rem(64px);
   }
 }
 
-.SortWrapper {
+.SortWrapper,
+.CustomToolWrapper {
   position: relative;
   display: flex;
   flex: 1;
