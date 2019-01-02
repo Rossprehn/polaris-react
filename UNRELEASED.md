@@ -10,6 +10,7 @@ Use [the changelog guidelines](https://git.io/polaris-changelog-guidelines) to f
 - Added `oneHalf` and `oneThird` props to `Layout` component ([#724](https://github.com/Shopify/polaris-react/pull/724))
 - Added `helpText` prop to ActionList items ([#777](https://github.com/Shopify/polaris-react/pull/777))
 - Updated `Page` header layout so actions take up less room on small screens ([#707](https://github.com/Shopify/polaris-react/pull/707))
+- Updated color of warning status `ExceptionList` items from dark orange to dark yellow for better differentiation from critical status items ([#813](https://github.com/Shopify/polaris-react/pull/813))
 
 ### Bug fixes
 
