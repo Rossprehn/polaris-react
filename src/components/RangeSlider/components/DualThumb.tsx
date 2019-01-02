@@ -229,8 +229,6 @@ export default class DualThumb extends React.Component<Props, State> {
             left: `calc(${leftPositionThumbUpper}px  - ${
               this.OUTPUT_TIP_SIZE
             }px)`,
-            // left: `calc(${leftPositionThumbUpper}%  - ${this.OUTPUT_TIP_SIZE +
-            //   this.THUMB_SIZE}px)`,
           }}
         >
           <div className={styles.OutputBubble}>
@@ -240,8 +238,10 @@ export default class DualThumb extends React.Component<Props, State> {
       );
 
     const cssVars = {
-      [`${cssVarPrefix}progress-lower`]: `${leftPositionThumbLower}px`,
-      [`${cssVarPrefix}progress-upper`]: `${leftPositionThumbUpper}px`,
+      [`${cssVarPrefix}progress-lower`]: `${leftPositionThumbLower +
+        this.THUMB_SIZE / 2}px`,
+      [`${cssVarPrefix}progress-upper`]: `${leftPositionThumbUpper +
+        this.THUMB_SIZE / 2}px`,
     };
 
     return (
@@ -253,7 +253,6 @@ export default class DualThumb extends React.Component<Props, State> {
             className={classNameThumbLower}
             ref={this.thumbLower}
             style={{
-              // left: `${this.state.valueLower}%`,
               left: `${leftPositionThumbLower}px`,
             }}
             role="slider"
@@ -266,24 +265,7 @@ export default class DualThumb extends React.Component<Props, State> {
             tabIndex={1}
             onFocus={onFocus}
             onBlur={onBlur}
-          >
-            {/* <KeypressListener
-              keyCode={Key.DownArrow}
-              handler={this.handleKeypressDecrementLower}
-            />
-            <KeypressListener
-              keyCode={Key.LeftArrow}
-              handler={this.handleKeypressDecrementLower}
-            />
-            <KeypressListener
-              keyCode={Key.UpArrow}
-              handler={this.handleKeypressIncrementLower}
-            />
-            <KeypressListener
-              keyCode={Key.RightArrow}
-              handler={this.handleKeypressIncrementLower}
-            /> */}
-          </div>
+          />
           {outputMarkupLower}
           <div
             id={idUpper}
@@ -291,7 +273,6 @@ export default class DualThumb extends React.Component<Props, State> {
             ref={this.thumbUpper}
             style={{
               left: `${leftPositionThumbUpper}px`,
-              // left: `calc(${leftPositionThumbUpper}% - ${this.THUMB_SIZE}px)`,
             }}
             role="slider"
             aria-disabled={disabled}
@@ -303,24 +284,7 @@ export default class DualThumb extends React.Component<Props, State> {
             tabIndex={1}
             onFocus={onFocus}
             onBlur={onBlur}
-          >
-            {/* <KeypressListener
-              keyCode={Key.DownArrow}
-              handler={this.handleKeypressDecrementUpper}
-            />
-            <KeypressListener
-              keyCode={Key.LeftArrow}
-              handler={this.handleKeypressDecrementUpper}
-            />
-            <KeypressListener
-              keyCode={Key.UpArrow}
-              handler={this.handleKeypressIncrementUpper}
-            />
-            <KeypressListener
-              keyCode={Key.RightArrow}
-              handler={this.handleKeypressIncrementUpper}
-            /> */}
-          </div>
+          />
           {outputMarkupUpper}
         </div>
         <div className={styles.AccessibilityInputsWrapper}>
@@ -510,7 +474,7 @@ export default class DualThumb extends React.Component<Props, State> {
       event.keyCode === Key.UpArrow ||
       event.keyCode === Key.RightArrow
     ) {
-      newValue = this.state.valueUpper + this.props.step;
+      newValue = this.state.valueLower + this.props.step;
     }
 
     const valueWithinBoundsLower = keepValueWithinBoundsLower(
