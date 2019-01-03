@@ -6,7 +6,7 @@ import {classNames} from '@shopify/react-utilities/styles';
 import {Error} from '../../types';
 import {withAppProvider, WithAppProviderProps} from '../AppProvider';
 import Labelled, {Action, helpTextID} from '../Labelled';
-import DualThumb from './components/DualThumb';
+import {DualThumb} from './components/DualThumb';
 import {invertNumber} from './utilities';
 
 import * as styles from './RangeSlider.scss';

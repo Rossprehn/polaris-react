@@ -5,10 +5,9 @@ import {
   removeEventListener,
 } from '@shopify/javascript-utilities/events';
 import {classNames} from '@shopify/react-utilities/styles';
-import TextField from '../../TextField';
+import TextField from '../../../TextField';
 
-import {Error, Key} from '../../../types';
-
+import {Error, Key} from '../../../../types';
 import * as styles from './DualThumb.scss';
 
 export interface State {
@@ -19,7 +18,7 @@ export interface State {
   accessibilitySuffix: string;
 }
 
-interface Props {
+export interface Props {
   id: string;
   cssVarPrefix: string;
   value: [number, number];
@@ -54,19 +53,28 @@ export default class DualThumb extends React.Component<Props, State> {
   private thumbUpper = React.createRef<HTMLDivElement>();
 
   componentDidMount() {
-    const valueWithinBoundsLower = keepValueWithinBoundsLower(
+    const steppedValueLower = roundToNearestStepValue(
       this.state.valueLower,
+      this.props.step,
+    );
+    const valueWithinBoundsLower = keepValueWithinBoundsLower(
+      steppedValueLower,
       this.state.valueUpper,
       this.props.min,
       this.props.step,
     );
 
-    const valueWithinBoundsUpper = keepValueWithinBoundsUpper(
+    const steppedValueUpper = roundToNearestStepValue(
       this.state.valueUpper,
+      this.props.step,
+    );
+    const valueWithinBoundsUpper = keepValueWithinBoundsUpper(
+      steppedValueUpper,
       this.state.valueLower,
       this.props.max,
       this.props.step,
     );
+
     this.setState({
       valueLower: valueWithinBoundsLower,
       valueUpper: valueWithinBoundsUpper,
@@ -129,6 +137,10 @@ export default class DualThumb extends React.Component<Props, State> {
     const idUpper = `${id}Upper`;
 
     const describedBy: string[] = [];
+
+    if (error) {
+      describedBy.push(`${id}Error`);
+    }
 
     const ariaDescribedBy = describedBy.length
       ? describedBy.join(' ')
@@ -202,8 +214,8 @@ export default class DualThumb extends React.Component<Props, State> {
     const leftPositionThumbUpper = (valueUpper / range) * adjustedTrackWidth;
 
     const classNameOutputLower = classNames(styles.Output, styles.OutputLower);
-    const outputMarkupLower = !disabled &&
-      output && (
+    const outputMarkupLower =
+      !disabled && output ? (
         <output
           htmlFor={idLower}
           className={classNameOutputLower}
@@ -217,11 +229,11 @@ export default class DualThumb extends React.Component<Props, State> {
             <span className={styles.OutputText}>{valueLower}</span>
           </div>
         </output>
-      );
+      ) : null;
 
     const classNameOutputUpper = classNames(styles.Output, styles.OutputUpper);
-    const outputMarkupUpper = !disabled &&
-      output && (
+    const outputMarkupUpper =
+      !disabled && output ? (
         <output
           htmlFor={idUpper}
           className={classNameOutputUpper}
@@ -235,7 +247,7 @@ export default class DualThumb extends React.Component<Props, State> {
             <span className={styles.OutputText}>{valueUpper}</span>
           </div>
         </output>
-      );
+      ) : null;
 
     const cssVars = {
       [`${cssVarPrefix}progress-lower`]: `${leftPositionThumbLower +
@@ -245,11 +257,17 @@ export default class DualThumb extends React.Component<Props, State> {
     };
 
     return (
-      <div className={styles.Wrapper}>
+      <div className={styles.Wrapper} id={id}>
         <div className={classNameTrackWrapper}>
-          <div className={styles.Track} style={cssVars} ref={this.track} />
+          <div
+            className={styles.Track}
+            style={cssVars}
+            ref={this.track}
+            testID="track"
+          />
           <div
             id={idLower}
+            testID="thumbLower"
             className={classNameThumbLower}
             ref={this.thumbLower}
             style={{
@@ -269,6 +287,7 @@ export default class DualThumb extends React.Component<Props, State> {
           {outputMarkupLower}
           <div
             id={idUpper}
+            testID="thumbUpper"
             className={classNameThumbUpper}
             ref={this.thumbUpper}
             style={{
@@ -278,7 +297,7 @@ export default class DualThumb extends React.Component<Props, State> {
             aria-disabled={disabled}
             aria-valuemin={min}
             aria-valuemax={max}
-            aria-valuenow={valueLower}
+            aria-valuenow={valueUpper}
             aria-invalid={Boolean(error)}
             aria-describedby={ariaDescribedBy}
             tabIndex={1}
@@ -436,10 +455,15 @@ export default class DualThumb extends React.Component<Props, State> {
       this.props.min,
       this.props.step,
     );
-    this.setState({
-      valueLower: valueWithinBoundsLower,
-      accessibilityPrefix: `${valueWithinBoundsLower}`,
-    });
+    this.setState(
+      {
+        valueLower: valueWithinBoundsLower,
+        accessibilityPrefix: `${valueWithinBoundsLower}`,
+      },
+      () => {
+        this.handleChange();
+      },
+    );
   }
 
   @autobind
@@ -455,10 +479,15 @@ export default class DualThumb extends React.Component<Props, State> {
       this.props.max,
       this.props.step,
     );
-    this.setState({
-      valueUpper: valueWithinBoundsUpper,
-      accessibilitySuffix: `${valueWithinBoundsUpper}`,
-    });
+    this.setState(
+      {
+        valueUpper: valueWithinBoundsUpper,
+        accessibilitySuffix: `${valueWithinBoundsUpper}`,
+      },
+      () => {
+        this.handleChange();
+      },
+    );
   }
 
   @autobind
@@ -484,10 +513,15 @@ export default class DualThumb extends React.Component<Props, State> {
       this.props.step,
     );
 
-    this.setState({
-      valueLower: valueWithinBoundsLower,
-      accessibilityPrefix: `${valueWithinBoundsLower}`,
-    });
+    this.setState(
+      {
+        valueLower: valueWithinBoundsLower,
+        accessibilityPrefix: `${valueWithinBoundsLower}`,
+      },
+      () => {
+        this.handleChange();
+      },
+    );
   }
 
   @autobind
@@ -513,10 +547,15 @@ export default class DualThumb extends React.Component<Props, State> {
       this.props.step,
     );
 
-    this.setState({
-      valueUpper: valueWithinBoundsUpper,
-      accessibilitySuffix: `${valueWithinBoundsUpper}`,
-    });
+    this.setState(
+      {
+        valueUpper: valueWithinBoundsUpper,
+        accessibilitySuffix: `${valueWithinBoundsUpper}`,
+      },
+      () => {
+        this.handleChange();
+      },
+    );
 
     event.preventDefault();
     event.stopPropagation();

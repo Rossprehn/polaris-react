@@ -1,7 +1,9 @@
 import * as React from 'react';
 import {noop} from '@shopify/javascript-utilities/other';
 import {shallowWithAppProvider, mountWithAppProvider} from 'test-utilities';
-import RangeSlider, {invertNumber} from '../RangeSlider';
+import RangeSlider from '../RangeSlider';
+import {invertNumber} from '../utilities';
+import {DualThumb} from '../components/DualThumb';
 
 describe('<RangeSlider />', () => {
   it('allows specific props to pass through properties on the input', () => {
@@ -22,6 +24,14 @@ describe('<RangeSlider />', () => {
     expect(input.prop('max')).toBe(20);
     expect(input.prop('step')).toBe(0.5);
     expect(input.prop('disabled')).toBe(true);
+  });
+
+  it('does not render if value is a tuple', () => {
+    const element = mountWithAppProvider(
+      <RangeSlider label="RangeSlider" id="MyRangeSlider" value={[0, 25]} onChange={noop} />,
+    );
+
+    expect(element.find('input')).toHaveLength(0);
   });
 
   describe('onChange()', () => {
@@ -276,6 +286,292 @@ describe('<RangeSlider />', () => {
       const actual = element.find('[style]').prop('style');
 
       expect(expected).toEqual(actual);
+    });
+  });
+
+  describe('DualThumb', () => {
+    it('does not get rendered if value is a single number', () => {
+      const id = 'MyRangeSlider';
+      const element = mountWithAppProvider(
+        <RangeSlider label="RangeSlider" id={id} value={25} onChange={noop} />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb).toHaveLength(0);
+    });
+
+    it('gets rendered if value is a tuple', () => {
+      const id = 'MyRangeSlider';
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id={id}
+          value={[0, 50]}
+          onChange={noop}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb).toHaveLength(1);
+    });
+
+    it('gets passed the id', () => {
+      const id = 'MyRangeSlider';
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id={id}
+          value={[0, 50]}
+          onChange={noop}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('id')).toBe(id);
+    });
+
+    it('gets passed the min', () => {
+      const min = 5;
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[10, 50]}
+          onChange={noop}
+          min={min}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('min')).toBe(min);
+    });
+
+    it('gets passed a default min if none is set', () => {
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[10, 50]}
+          onChange={noop}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('min')).toBe(0);
+    });
+
+    it('gets passed the max', () => {
+      const max = 0;
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          max={max}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('max')).toBe(max);
+    });
+
+    it('gets passed a default max if none is set', () => {
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('max')).toBe(100);
+    });
+
+    it('gets passed the step', () => {
+      const step = 5;
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          step={step}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('step')).toBe(step);
+    });
+
+    it('gets passed a default step if none is set', () => {
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('step')).toBe(1);
+    });
+
+    it('gets passed the output', () => {
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          output
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('output')).toBe(true);
+    });
+
+    it('gets passed the cssVarPrefix', () => {
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('cssVarPrefix')).toBe('--Polaris-RangeSlider-');
+    });
+
+    it('gets passed the error', () => {
+      const error = 'Error';
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          error={error}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('error')).toBe(error);
+    });
+
+    it('gets passed the prefix', () => {
+      const prefix = '$';
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          prefix={prefix}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('prefix')).toBe(prefix);
+    });
+
+    it('gets passed the suffix', () => {
+      const suffix = '$';
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          suffix={suffix}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('suffix')).toBe(suffix);
+    });
+
+    it('gets passed disabled', () => {
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          disabled
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('disabled')).toBe(true);
+    });
+
+    it('gets passed accessibilityInputs', () => {
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          accessibilityInputs
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('accessibilityInputs')).toBe(true);
+    });
+
+    it('gets passed onChange', () => {
+      const onChange = noop;
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={onChange}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('onChange')).toBe(onChange);
+    });
+
+    it('gets passed onFocus', () => {
+      const onFocus = noop;
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          onFocus={onFocus}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('onFocus')).toBe(onFocus);
+    });
+
+    it('gets passed onBlur', () => {
+      const onBlur = noop;
+      const element = mountWithAppProvider(
+        <RangeSlider
+          label="RangeSlider"
+          id="MyRangeSlider"
+          value={[0, 50]}
+          onChange={noop}
+          onBlur={onBlur}
+        />,
+      );
+
+      const dualThumb = element.find(DualThumb);
+      expect(dualThumb.prop('onBlur')).toBe(onBlur);
     });
   });
 });
