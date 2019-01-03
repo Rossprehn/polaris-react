@@ -110,20 +110,6 @@ $range-accessibility-input-margin: rem(8px);
   }
 }
 
-.ThumbLower:hover + &,
-.ThumbLower:active + &,
-.ThumbLower:focus + & {
-  opacity: 1;
-  visibility: visible;
-}
-
-.ThumbUpper:hover + &,
-.ThumbUpper:active + &,
-.ThumbUpper:focus + & {
-  opacity: 1;
-  visibility: visible;
-}
-
 $range-output-size: rem(32px);
 $range-output-tip-size: rem(8px);
 
